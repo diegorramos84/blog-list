@@ -1,4 +1,8 @@
 const listHelper = require('../utils/list_helper')
+const supertest = require('supertest')
+const app = require('../app')
+
+const api = supertest(app)
 
 const blogs = [
   {

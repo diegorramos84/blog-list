@@ -7,8 +7,9 @@ const totalLikes = (blogs) => blogs.reduce(
   { return blog.likes + sum }, 0)
 
 const favoriteBlog = (blogs) => {
-  // assign first blog.likes to max
-  // compare with the next blog.likes iteration and keep the higher value
+  // assign initial reduce value to be the firs object(leave it blank)
+  // compare with the next blog.likes iteration and keep the object with the
+  // higher value
   const favorite = blogs.reduce((fav, blog) => {
     if(fav.likes > blog.likes) {
       return fav
