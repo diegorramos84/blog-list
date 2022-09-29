@@ -30,11 +30,29 @@ test('blogs are returned as json', async () => {
 test('unique identifier property of the blog post is named id', async () => {
   const response = await api.get('/api/blogs')
   const content = response.body
-  console.log(content)
 
   const idChecker = content.map(r => r.id)
-  console.log(idChecker)
   expect(idChecker[0]).toBeDefined()
+})
+
+test('a new blog post can be created and saved', async () => {
+  const newPost = { // creates new post by the blog model schema
+    title: 'new post',
+    author: 'Diego',
+    url: 'www.diegoramos.com',
+    likes: 5
+  }
+
+  await api // make a post request to the api/blogs & send new post
+    .post('/api/blogs')
+    .send(newPost)
+    .expect(201)
+
+  //  check if a post was added to the database
+  const finalBlogs = await api.get('/api/blogs')
+
+  expect(finalBlogs.body).toHaveLength(helper.initialBlogs.length + 1)
+
 })
 
 afterAll(() => {
