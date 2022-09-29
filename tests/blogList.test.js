@@ -52,7 +52,25 @@ test('a new blog post can be created and saved', async () => {
   const finalBlogs = await api.get('/api/blogs')
 
   expect(finalBlogs.body).toHaveLength(helper.initialBlogs.length + 1)
+})
 
+test('if the "likes" prop is missing from request its value will default to 0', async () => {
+  const newPost = { // create a post with missing likes field
+    title: 'new post',
+    author: 'Diego',
+    url: 'www.diegoramos.com',
+  }
+
+  // make a post request
+  await api
+  .post('/api/blogs')
+  .send(newPost)
+  .expect(201)
+
+  const finalBlogs = await api.get('/api/blogs')
+  const finalPost = finalBlogs.body
+
+  expect(finalPost[finalPost.length - 1].likes).toBe(0)
 })
 
 afterAll(() => {
