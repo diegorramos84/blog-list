@@ -4,6 +4,7 @@ const helper = require('./test_helper')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const { findById } = require('../models/blog')
 
 
 beforeEach(async () => {
@@ -107,19 +108,36 @@ describe('new blog post creation', () => {
 
 describe('deletion of a blog post', () => {
   test('blog post can be deleted', async () => {
-    const blogs = await helper.blogsInDB()
-    const blogToDelete = blogs[0]
+    const initialBlogs = await helper.blogsInDB()
+    const blogToDelete = initialBlogs[0]
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
       .expect(204)
 
     const updatedBlogsList = await helper.blogsInDB()
+    expect(updatedBlogsList).toHaveLength(initialBlogs.length -1)
 
-    expect(updatedBlogsList).toHaveLength(blogs.length -1)
+    const titles = updatedBlogsList.map(r => r.title)
 
-    const contents = updatedBlogsList.map(r => r.content)
-    expect(contents).not.toContain(blogToDelete.content)
+    expect(titles).not.toContain(blogToDelete.title)
+  })
+})
+
+describe('updating a blog post', () => {
+  test('updating like count', async () => {
+    const blogs = await helper.blogsInDB()
+    const blogToUpdate = blogs[0]
+
+    blogToUpdate.likes = 100
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(blogToUpdate)
+      .expect(200)
+
+    const updatedBlogs = await helper.blogsInDB()
+    expect(updatedBlogs[0].likes).toBe(blogToUpdate.likes)
   })
 })
 
