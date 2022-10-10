@@ -3,18 +3,18 @@ const User = require('../models/user')
 const helper = require('./test_helper')
 const app = require('../app')
 const supertest = require('supertest')
+const mongoose = require('mongoose')
 
 const api = supertest(app)
 
 describe('when there is initially one user in db', () => {
   beforeEach(async () => {
     await User.deleteMany({})
+    console.log('cleared')
 
     const passwordHash = await bcrypt.hash('sekret', 10)
-    const user = new User({
-      username: 'root',
-      passwordHash
-    })
+
+    const user = new User({ username: 'root', name:'superuser', passwordHash })
 
     await user.save()
   })
@@ -23,9 +23,9 @@ describe('when there is initially one user in db', () => {
     const usersAtStart = await helper.usersInDB()
 
     const newUser = {
-      username: 'diegorramos',
-      name: 'Diego Ramos',
-      password: 'test'
+      username: 'mluukkai',
+      name: 'Matti Luukkainen',
+      password: 'salainen',
     }
 
     await api
@@ -40,6 +40,8 @@ describe('when there is initially one user in db', () => {
     const usernames = usersAtEnd.map(u => u.username)
     expect(usernames).toContain(newUser.username)
   })
+})
 
-
+afterAll(() => {
+  mongoose.connection.close()
 })
