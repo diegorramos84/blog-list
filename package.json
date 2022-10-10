@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/diegorramos84/blog-list#readme",
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.2",
     "eslint": "^8.23.0",
