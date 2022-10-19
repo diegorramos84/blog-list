@@ -14,7 +14,11 @@ describe('when there is initially one user in db', () => {
 
     const passwordHash = await bcrypt.hash('sekret', 10)
 
-    const user = new User({ username: 'root', name:'superuser', passwordHash })
+    const user = new User({
+      username: 'root',
+      name:'superuser',
+      passwordHash,
+    })
 
     await user.save()
   })
@@ -39,6 +43,65 @@ describe('when there is initially one user in db', () => {
 
     const usernames = usersAtEnd.map(u => u.username)
     expect(usernames).toContain(newUser.username)
+  })
+
+  test('user creation fails with username shorter than 3 chars', async () => {
+    const usersAtStart = await helper.usersInDB({})
+
+    const newUser = {
+      username: 'te',
+      name: 'test',
+      password: 'test'
+    }
+
+    await api
+    .post('/api/users')
+    .send(newUser)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDB({})
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+  })
+
+  test('user creation fails with password shorter than 3 chars', async () => {
+    const usersAtStart = await helper.usersInDB({})
+
+    const newUser = {
+      username: 'test',
+      name: 'test',
+      password: 'te'
+    }
+
+    await api
+    .post('/api/users')
+    .send(newUser)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDB({})
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+  })
+
+  test('user creation fails if username is not unique', async () => {
+    const usersAtStart = await helper.usersInDB({})
+
+    const newUser = {
+      username: 'root',
+      name: 'Superuser',
+      password: 'test'
+    }
+
+    const result = await api
+    .post('/api/users')
+    .send(newUser)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('username must be unique')
+
+    const usersAtEnd = await helper.usersInDB({})
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
   })
 })
 
