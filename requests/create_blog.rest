@@ -1,10 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRpZWdvcnJhbW9zIiwiaWQiOiI2MzQ0NWFkMzgxZGViNDY2Y2M1MzU5NGIiLCJpYXQiOjE2NjYyNzU0MjZ9.mrd1WI8JkIga74dJZ68xdbf8vmCuGsAcWirXoGGcAUk
 
   {
-  "title": "agora vai 3",
+  "title": "agora vai 10",
   "author": "Diego Ramos",
   "url": "www.medium.com",
-  "likes": 10,
-  "userId": "63445ad381deb466cc53594b"
+  "likes": 10
   }
