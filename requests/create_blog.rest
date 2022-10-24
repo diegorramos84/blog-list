@@ -1,9 +1,9 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-# Authorization: bearer abJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRpZWdvcnJhbW9zIiwiaWQiOiI2MzQ0NWFkMzgxZGViNDY2Y2M1MzU5NGIiLCJpYXQiOjE2NjY2MTY2MjN9.w4TsMQCAwEcAYnd-bT7p0jCDhVUPiE1sr8OhNkvV0sg
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRpZWdvcnJhbW9zIiwiaWQiOiI2MzQ0NWFkMzgxZGViNDY2Y2M1MzU5NGIiLCJpYXQiOjE2NjY2MTk2NTV9.IQUf2i-7HARONaHvWFtXj6RUTJ83Lvgy3fqCqfis3ko
 
   {
-  "title": "agora vai 1000",
+  "title": "refactoring token extractor v4",
   "author": "Diego Ramos",
   "url": "www.medium.com",
   "likes": 10
