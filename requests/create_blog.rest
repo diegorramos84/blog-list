@@ -1,6 +1,6 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: bearer 2JhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRpZWdvcnJhbW9zIiwiaWQiOiI2MzQ0NWFkMzgxZGViNDY2Y2M1MzU5NGIiLCJpYXQiOjE2NjYyNzU0MjZ9.mrd1WI8JkIga74dJZ68xdbf8vmCuGsAcWirXoGGcAUk
+# Authorization: bearer abJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRpZWdvcnJhbW9zIiwiaWQiOiI2MzQ0NWFkMzgxZGViNDY2Y2M1MzU5NGIiLCJpYXQiOjE2NjY2MTY2MjN9.w4TsMQCAwEcAYnd-bT7p0jCDhVUPiE1sr8OhNkvV0sg
 
   {
   "title": "agora vai 1000",
