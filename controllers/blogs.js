@@ -20,11 +20,6 @@ blogsRouter.get('/:id', async (request, response) => {
 })
 
 blogsRouter.post('/', userExtractor, async (request, response) => {
-  // const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  // if (!decodedToken.id) {
-  //   return response.status(401).json({ error: 'token missing or invalid' })
-  // }
-
   const user = request.user
   const body = request.body
 
@@ -50,15 +45,13 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
 blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   // fetch blog post we want to delete
   const blog = await Blog.findById(request.params.id)
+  const user = request.user
 
-  // decode token and check validaty
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken) {
-    return response.status(401).json({ error: 'token missing or invalid' })
-  }
+  console.log(blog.user.toString())
+  console.log(user._id.toString()) // usin userExtractor middleware
 
   // compare the blog.user (id) with the id from the token
-  if (blog.user.toString() === decodedToken.id.toString()) {
+  if (blog.user.toString() === user._id.toString()) {
     await Blog.deleteOne(blog)
     response.status(204).end()
   } else {
