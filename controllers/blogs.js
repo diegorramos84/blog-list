@@ -31,7 +31,7 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
     user: user._id
   })
 
-  if (blog.title === "" || blog.url === "") {
+  if (!blog.title || !blog.url) {
     response.status(400).end()
   } else {
     const savedBlog = await blog.save()

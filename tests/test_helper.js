@@ -1,5 +1,8 @@
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const supertest = require('supertest')
+const app = require('../app')
+const api = supertest(app)
 
 const initialBlogs = [
   {
@@ -65,5 +68,5 @@ const usersInDB = async () => {
 module.exports = {
   initialBlogs,
   blogsInDB,
-  usersInDB
+  usersInDB,
 }

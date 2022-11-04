@@ -2,10 +2,20 @@ const supertest = require('supertest')
 const mongoose = require('mongoose')
 const helper = require('./test_helper')
 const app = require('../app')
-const api = supertest(app)
-const Blog = require('../models/blog')
-const { findById } = require('../models/blog')
+const bcrypt = require('bcrypt')
 
+const Blog = require('../models/blog')
+const User = require('../models/user')
+
+const api = supertest(app)
+
+beforeAll(async () => {
+  //create admin user for the test
+  const passwordHash = await bcrypt.hash('sekret', 10)
+  const user = new User({ username: 'admin', passwordHash })
+
+  await user.save()
+})
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -32,15 +42,37 @@ describe('viewing posts', () => {
 
 describe('new blog post creation', () => {
   test('a new blog post can be created and saved', async () => {
+
+  //login user to get token
+  const response = await api
+  .post('/api/login')
+  .send(
+    {
+      "username": "admin",
+      "password": "sekret"
+    })
+
+  const token = response.body.token
+
+  const users = await api.get('/api/users')
+
+  const adminId = users.body[0].id
+
     const newPost = { // creates new post by the blog model schema
       title: 'new post',
       author: 'Diego',
       url: 'www.diegoramos.com',
-      likes: 5
+      likes: 5,
+      user: {
+        username: 'admin',
+        id: adminId
+      }
     }
 
     await api // make a post request to the api/blogs & send new post
       .post('/api/blogs')
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer ' + token)
       .send(newPost)
       .expect(201)
 
@@ -59,17 +91,38 @@ describe('new blog post creation', () => {
   })
 
   test('likes property will default to 0 if empty', async () => {
-    const newPost = { // create a post with missing likes field
+    //login user to get token
+    const response = await api
+    .post('/api/login')
+    .send(
+      {
+        "username": "admin",
+        "password": "sekret"
+      })
+
+    const token = response.body.token
+
+    const users = await api.get('/api/users')
+
+    const adminId = users.body[0].id
+
+
+    const newPost = { // creates new post by the blog model schema
       title: 'new post',
       author: 'Diego',
       url: 'www.diegoramos.com',
+      user: {
+        username: users.body[0],
+        id: adminId
+      }
     }
 
-    // make a post request
-    await api
-    .post('/api/blogs')
-    .send(newPost)
-    .expect(201)
+    await api // make a post request to the api/blogs & send new post
+      .post('/api/blogs')
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer ' + token)
+      .send(newPost)
+      .expect(201)
 
     const finalBlogs = await api.get('/api/blogs')
     const finalPost = finalBlogs.body
@@ -78,41 +131,119 @@ describe('new blog post creation', () => {
   })
 
   test('fails creating a post with status 400 if if missing title', async () => {
-    const newPost = { // create a post with missing likes field
-      title: '',
+    //login user to get token
+    const response = await api
+    .post('/api/login')
+    .send(
+      {
+        "username": "admin",
+        "password": "sekret"
+      })
+
+    const token = response.body.token
+
+    const users = await api.get('/api/users')
+
+    const adminId = users.body[0].id
+
+
+    const newPost = { // creates new post by the blog model schema
       author: 'Diego',
-      url: 'www.diegorramos.com',
-      likes: 0
+      url: 'www.diegoramos.com',
+      likes: 5,
+      user: {
+        username: users.body[0],
+        id: adminId
+      }
     }
 
-    await api
-    .post('/api/blogs')
-    .send(newPost)
-    .expect(400)
+    await api // make a post request to the api/blogs & send new post
+      .post('/api/blogs')
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer ' + token)
+      .send(newPost)
+      .expect(400)
   })
-
   test('fails creating a post with status 400 if missing url', async () => {
-    const newPost = { // create a post with missing likes field
-      title: 'this is a test',
+    //login user to get token
+    const response = await api
+    .post('/api/login')
+    .send(
+      {
+        "username": "admin",
+        "password": "sekret"
+      })
+
+    const token = response.body.token
+
+    const users = await api.get('/api/users')
+
+    const adminId = users.body[0].id
+
+
+    const newPost = { // creates new post by the blog model schema
+      title: 'test',
       author: 'Diego',
-      url: '',
-      likes: 0
+      likes: 5,
+      user: {
+        username: users.body[0],
+        id: adminId
+      }
     }
 
-    await api
-    .post('/api/blogs')
-    .send(newPost)
-    .expect(400)
+    await api // make a post request to the api/blogs & send new post
+      .post('/api/blogs')
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer ' + token)
+      .send(newPost)
+      .expect(400)
   })
 })
 
 describe('deletion of a blog post', () => {
   test('blog post can be deleted', async () => {
-    const initialBlogs = await helper.blogsInDB()
-    const blogToDelete = initialBlogs[0]
+
+    //login user to get token
+    const response = await api
+    .post('/api/login')
+    .send(
+      {
+        "username": "admin",
+        "password": "sekret"
+      })
+
+      const token = response.body.token
+
+      const users = await api.get('/api/users')
+
+      const adminId = users.body[0].id
+
+
+      const newPost = { // creates new post by the blog model schema
+        title: 'test',
+        author: 'Diego',
+        likes: 5,
+        user: {
+          username: users.body[0],
+          id: adminId
+        }
+      }
+
+      await api // make a post request to the api/blogs & send new post
+      .post('/api/blogs')
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer ' + token)
+      .send(newPost)
+  })
+
+      const initialBlogs = await helper.blogsInDB()
+      const blogToDelete = initialBlogs[initialBlogs.length-1]
+      console.log(blogToDelete)
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer ' + token)
       .expect(204)
 
     const updatedBlogsList = await helper.blogsInDB()
