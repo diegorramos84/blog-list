@@ -218,7 +218,8 @@ describe('deletion of a blog post', () => {
 
   const adminId = users.body[0].id
 
-  const newPost = { // creates new post by the blog model schema
+  // create a post with logged user to delete it later
+  const newPost = {
     title: 'test',
     author: 'Diego',
     url: 'www.diegoramos.com',
@@ -236,17 +237,20 @@ describe('deletion of a blog post', () => {
     .send(newPost)
     .expect(201)
 
-  //  check if a post was added to the database
+  //  get the post we just added
   const finalBlogs = await api.get('/api/blogs')
   const finalBlogsArray = finalBlogs.body
   const blogToDelete = finalBlogsArray[finalBlogsArray.length - 1]
 
+  // delete the post we added before
   await api
   .delete(`/api/blogs/${blogToDelete.id}`)
   .set('Accept', 'application/json')
   .set('Authorization', 'Bearer ' + token)
   .expect(204)
 
+  // because we added one post, the final post number
+  // should match the original list
   const updatedBlogsList = await helper.blogsInDB()
   expect(updatedBlogsList).toHaveLength(helper.initialBlogs.length)
 
