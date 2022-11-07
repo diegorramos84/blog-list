@@ -203,57 +203,59 @@ describe('new blog post creation', () => {
 describe('deletion of a blog post', () => {
   test('blog post can be deleted', async () => {
 
-    //login user to get token
-    const response = await api
-    .post('/api/login')
-    .send(
-      {
-        "username": "admin",
-        "password": "sekret"
-      })
+  //login user to get token
+  const response = await api
+  .post('/api/login')
+  .send(
+    {
+      "username": "admin",
+      "password": "sekret"
+    })
 
-      const token = response.body.token
+  const token = response.body.token
 
-      const users = await api.get('/api/users')
+  const users = await api.get('/api/users')
 
-      const adminId = users.body[0].id
+  const adminId = users.body[0].id
 
+  const newPost = { // creates new post by the blog model schema
+    title: 'test',
+    author: 'Diego',
+    url: 'www.diegoramos.com',
+    likes: 5,
+    user: {
+      username: 'admin',
+      id: adminId
+    }
+  }
 
-      const newPost = { // creates new post by the blog model schema
-        title: 'test',
-        author: 'Diego',
-        likes: 5,
-        user: {
-          username: users.body[0],
-          id: adminId
-        }
-      }
+  await api // make a post request to the api/blogs & send new post
+    .post('/api/blogs')
+    .set('Accept', 'application/json')
+    .set('Authorization', 'Bearer ' + token)
+    .send(newPost)
+    .expect(201)
 
-      await api // make a post request to the api/blogs & send new post
-      .post('/api/blogs')
-      .set('Accept', 'application/json')
-      .set('Authorization', 'Bearer ' + token)
-      .send(newPost)
-  })
+  //  check if a post was added to the database
+  const finalBlogs = await api.get('/api/blogs')
+  const finalBlogsArray = finalBlogs.body
+  const blogToDelete = finalBlogsArray[finalBlogsArray.length - 1]
 
-      const initialBlogs = await helper.blogsInDB()
-      const blogToDelete = initialBlogs[initialBlogs.length-1]
-      console.log(blogToDelete)
+  await api
+  .delete(`/api/blogs/${blogToDelete.id}`)
+  .set('Accept', 'application/json')
+  .set('Authorization', 'Bearer ' + token)
+  .expect(204)
 
-    await api
-      .delete(`/api/blogs/${blogToDelete.id}`)
-      .set('Accept', 'application/json')
-      .set('Authorization', 'Bearer ' + token)
-      .expect(204)
+  const updatedBlogsList = await helper.blogsInDB()
+  expect(updatedBlogsList).toHaveLength(helper.initialBlogs.length)
 
-    const updatedBlogsList = await helper.blogsInDB()
-    expect(updatedBlogsList).toHaveLength(initialBlogs.length -1)
+  const titles = updatedBlogsList.map(r => r.title)
 
-    const titles = updatedBlogsList.map(r => r.title)
-
-    expect(titles).not.toContain(blogToDelete.title)
+  expect(titles).not.toContain(blogToDelete.title)
   })
 })
+
 
 describe('updating a blog post', () => {
   test('updating like count', async () => {
