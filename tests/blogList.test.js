@@ -200,7 +200,7 @@ describe('new blog post creation', () => {
   })
 })
 
-describe('deletion of a blog post', () => {
+describe('deletion of a blog post by post creator only', () => {
   test('blog post can be deleted', async () => {
 
   //login user to get token
