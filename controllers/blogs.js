@@ -60,17 +60,27 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
 })
 
 blogsRouter.put('/:id', async (request, response) => {
+  // get the blog with the updates from the request
   const body = request.body
+  // get the user thas requesting the blog update from the request
+  const user = request.user
+  // fetch the blog we are trying to update using the id in the params
+  // this is done so we can compare the user thats requesting to the user that owns the blog
+  const blogToUpdate = await Blog.findById(request.params.id)
 
-  const blog = {
-    title: body.title,
-    author: body.author,
-    url: body.url,
-    likes: body.likes
+  // compare the blog.user id with the id from the token
+  if (blogToUpdate.user.toString() === user._id.toString()) {
+
+    // if true, create blog with the updated data and update it
+    const blog = {
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes
+    }
+    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
+    return response.json(updatedBlog)
   }
-
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
-  return response.json(updatedBlog)
 })
 
 module.exports = blogsRouter
