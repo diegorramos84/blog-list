@@ -63,7 +63,7 @@ blogsRouter.put('/:id', async (request, response) => {
   // get the blog with the updates from the request
   const body = request.body
   // get the user thas requesting the blog update from the request
-  const user = request.user
+  const user = request.body.user
   // // fetch the blog we are trying to update using the id in the params
   // // this is done so we can compare the user thats requesting to the user that owns the blog
   // const blogToUpdate = await Blog.findById(request.params.id)
