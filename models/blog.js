@@ -8,7 +8,8 @@ const blogSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }
+  },
+  image: String
 })
 
 // const Blog = mongoose.model('Blog', blogSchema)

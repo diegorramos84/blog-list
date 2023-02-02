@@ -3,6 +3,8 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 const userExtractor = require('../utils/middleware').userExtractor
+const multer = require('multer')
+const upload = require('../cloudinary/upload')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
@@ -19,16 +21,21 @@ blogsRouter.get('/:id', async (request, response) => {
   }
 })
 
-blogsRouter.post('/', userExtractor, async (request, response) => {
+blogsRouter.post('/', userExtractor, multer().single('file'), async (request, response) => {
   const user = request.user
   const body = request.body
+  console.log(body)
+
+  const image_uploaded = await upload.uploadImage(body.image)
+  console.log(image_uploaded)
 
   const blog = new Blog({
     title: body.title,
     author: body.author,
     url: body.url,
     likes: body.likes || 0,
-    user: user._id
+    user: user._id,
+    image: image_uploaded.secure_url
   })
 
   if (!blog.title || !blog.url) {
