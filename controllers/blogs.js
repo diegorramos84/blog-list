@@ -21,7 +21,7 @@ blogsRouter.get('/:id', async (request, response) => {
   }
 })
 
-blogsRouter.post('/', userExtractor, multer().single('file'), async (request, response) => {
+blogsRouter.post('/', userExtractor, multer({ limits: { fieldSize: 25 * 1024 * 1024 }}).single('file'), async (request, response) => {
   const user = request.user
   const body = request.body
   console.log(body)
